@@ -1,0 +1,15 @@
+{
+  "name": "zendesk-article-site",
+  "version": "1.0.0",
+  "description": "Zendesk AI Agent Web Crawler Test Site",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["zendesk", "ai-agent", "article"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
