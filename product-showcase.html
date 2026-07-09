@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudFlow - 次世代ビジネス管理プラットフォーム</title>
+  <meta name="description" content="チームの生産性を最大化するオールインワンビジネス管理プラットフォーム。プロジェクト管理、顧客管理、分析機能を一つに統合。">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #ffffff;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 100px 20px 120px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
+      background-size: 50px 50px;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      margin-bottom: 25px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 22px;
+      margin-bottom: 40px;
+      opacity: 0.95;
+      line-height: 1.6;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 16px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #667eea;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-3px);
+    }
+
+    /* Stats Section */
+    .stats {
+      background: #f8f9fa;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .stats-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+    }
+
+    .stat-item h3 {
+      font-size: 48px;
+      color: #667eea;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .stat-item p {
+      font-size: 18px;
+      color: #666;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 100px 20px;
+      background: white;
+    }
+
+    .features-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 70px;
+    }
+
+    .section-header h2 {
+      font-size: 42px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .section-header p {
+      font-size: 20px;
+      color: #666;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+    }
+
+    .feature-card {
+      padding: 40px 30px;
+      background: #f8f9fa;
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+      border-color: #667eea;
+    }
+
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .feature-card p {
+      font-size: 16px;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    /* Benefits Section */
+    .benefits {
+      padding: 100px 20px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .benefits-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .benefits-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 50px;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .benefit-icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+
+    .benefit-content h4 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .benefit-content p {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Testimonial Section */
+    .testimonial {
+      padding: 100px 20px;
+      background: white;
+      text-align: center;
+    }
+
+    .testimonial-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .testimonial-card {
+      background: #f8f9fa;
+      padding: 50px 40px;
+      border-radius: 20px;
+      margin-top: 50px;
+    }
+
+    .testimonial-text {
+      font-size: 24px;
+      line-height: 1.7;
+      color: #333;
+      font-style: italic;
+      margin-bottom: 30px;
+    }
+
+    .testimonial-author {
+      font-size: 18px;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .testimonial-position {
+      font-size: 16px;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 100px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      text-align: center;
+      color: white;
+    }
+
+    .cta-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cta-section h2 {
+      font-size: 42px;
+      margin-bottom: 25px;
+      line-height: 1.3;
+    }
+
+    .cta-section p {
+      font-size: 20px;
+      margin-bottom: 40px;
+      opacity: 0.95;
+    }
+
+    /* Footer */
+    footer {
+      background: #1a1a1a;
+      color: #999;
+      padding: 50px 20px 30px;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #999;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: #667eea;
+    }
+
+    .footer-bottom {
+      padding-top: 30px;
+      border-top: 1px solid #333;
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero p {
+        font-size: 18px;
+      }
+
+      .section-header h2 {
+        font-size: 32px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-section h2 {
+        font-size: 32px;
+      }
+
+      .testimonial-text {
+        font-size: 20px;
+      }
+
+      .stat-item h3 {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>ビジネスを加速させる<br>オールインワンプラットフォーム</h1>
+      <p>CloudFlowは、プロジェクト管理、顧客管理、分析機能を一つに統合。<br>チームの生産性を最大化し、ビジネスの成長をサポートします。</p>
+      <div class="cta-buttons">
+        <a href="#" class="btn btn-primary">無料トライアルを開始</a>
+        <a href="#features" class="btn btn-secondary">機能を見る</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="stats-container">
+      <div class="stat-item">
+        <h3>50,000+</h3>
+        <p>導入企業数</p>
+      </div>
+      <div class="stat-item">
+        <h3>99.9%</h3>
+        <p>稼働率</p>
+      </div>
+      <div class="stat-item">
+        <h3>150+</h3>
+        <p>国と地域</p>
+      </div>
+      <div class="stat-item">
+        <h3>4.8/5.0</h3>
+        <p>顧客満足度</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="features-container">
+      <div class="section-header">
+        <h2>あらゆる業務を一つのプラットフォームで</h2>
+        <p>CloudFlowは、チームが必要とするすべてのツールを提供します</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>プロジェクト管理</h3>
+          <p>タスク管理、ガントチャート、カンバンボードで、プロジェクトの進捗を可視化。チーム全体で効率的に作業を進められます。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">👥</div>
+          <h3>顧客管理（CRM）</h3>
+          <p>顧客情報を一元管理し、営業活動を最適化。商談履歴、コミュニケーション履歴をすべて一箇所で管理できます。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h3>データ分析・レポート</h3>
+          <p>リアルタイムでビジネスの状況を把握。カスタマイズ可能なダッシュボードで、重要な指標を一目で確認できます。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔔</div>
+          <h3>自動化ワークフロー</h3>
+          <p>繰り返し作業を自動化し、チームの時間を節約。通知、承認フロー、タスク割り当てを自動的に実行します。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>セキュリティ・権限管理</h3>
+          <p>エンタープライズレベルのセキュリティで、大切なデータを保護。柔軟な権限設定で、適切なアクセス制御が可能です。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3>外部ツール連携</h3>
+          <p>Slack、Microsoft Teams、Google Workspaceなど、既存のツールとシームレスに連携。API経由でカスタム統合も可能です。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="benefits">
+    <div class="benefits-container">
+      <div class="section-header">
+        <h2>CloudFlowを選ぶ理由</h2>
+        <p>導入企業が実感している価値</p>
+      </div>
+      <div class="benefits-list">
+        <div class="benefit-item">
+          <div class="benefit-icon">⚡</div>
+          <div class="benefit-content">
+            <h4>生産性40%向上</h4>
+            <p>自動化機能とシームレスな連携により、チームの作業効率が大幅に改善します。</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">💰</div>
+          <div class="benefit-content">
+            <h4>コスト30%削減</h4>
+            <p>複数のツールを一つに統合することで、ライセンス費用と管理コストを削減できます。</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🚀</div>
+          <h4>即座に導入可能</h4>
+            <p>複雑な設定は不要。数分でアカウントを作成し、すぐに使い始められます。</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🌍</div>
+          <div class="benefit-content">
+            <h4>グローバル対応</h4>
+            <p>20以上の言語に対応し、世界中のチームで使用できます。タイムゾーンも自動調整。</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">📱</div>
+          <div class="benefit-content">
+            <h4>モバイル完全対応</h4>
+            <p>iOS/Androidアプリで、外出先でも業務を継続。オフラインでも一部機能が利用可能です。</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🎯</div>
+          <div class="benefit-content">
+            <h4>柔軟なカスタマイズ</h4>
+            <p>業種や業務に合わせて自由にカスタマイズ。テンプレートも豊富に用意しています。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonial Section -->
+  <section class="testimonial">
+    <div class="testimonial-container">
+      <div class="section-header">
+        <h2>お客様の声</h2>
+        <p>実際に導入された企業からの評価</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-text">
+          「CloudFlowを導入してから、チーム間のコミュニケーションが劇的に改善しました。プロジェクトの進捗が可視化され、意思決定のスピードが2倍になりました。もう手放せません。」
+        </div>
+        <div class="testimonial-author">田中 太郎</div>
+        <div class="testimonial-position">株式会社サンプル / プロジェクトマネージャー</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>今すぐCloudFlowを始めましょう</h2>
+      <p>14日間の無料トライアル。クレジットカード不要。<br>数分で始められます。</p>
+      <div class="cta-buttons">
+        <a href="#" class="btn btn-primary">無料で始める</a>
+        <a href="#" class="btn btn-secondary">デモを予約</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#">製品</a>
+        <a href="#">価格</a>
+        <a href="#">リソース</a>
+        <a href="#">サポート</a>
+        <a href="#">会社概要</a>
+        <a href="#">お問い合わせ</a>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 CloudFlow. All rights reserved.</p>
+        <p style="margin-top: 10px; font-size: 13px;">プライバシーポリシー | 利用規約 | セキュリティ</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Start of yuki-general Zendesk Widget script -->
+  <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=bf40d219-be90-4dc2-b6f9-96faf3a00b10"> </script>
+  <!-- End of yuki-general Zendesk Widget script -->
+</body>
+</html>
