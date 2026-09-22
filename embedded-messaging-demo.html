@@ -292,7 +292,8 @@
 
   <script>
     var currentMode = 'full';
-    var widgetReady = false;
+    var renderAttempts = 0;
+    var maxAttempts = 15;
 
     function setStatus(id, message, state) {
       var el = document.getElementById(id);
@@ -335,27 +336,51 @@
       document.getElementById('code-preview').textContent = code;
     }
 
+    function buildConfig(mode) {
+      if (mode === 'full') {
+        return { mode: 'embedded', widget: { targetElement: '#embed-full' } };
+      } else if (mode === 'split') {
+        return {
+          mode: 'embedded',
+          conversationList: { targetElement: '#embed-list' },
+          messageLog: { targetElement: '#embed-log' }
+        };
+      } else if (mode === 'list') {
+        return { mode: 'embedded', conversationList: { targetElement: '#embed-full' } };
+      } else if (mode === 'log') {
+        return { mode: 'embedded', messageLog: { targetElement: '#embed-full' } };
+      } else if (mode === 'floating') {
+        return { mode: 'floating' };
+      }
+    }
+
     function renderEmbed(mode) {
+      renderAttempts = 0;
+      attemptRender(mode);
+    }
+
+    function attemptRender(mode) {
+      renderAttempts++;
       try {
-        if (mode === 'full') {
-          zE('messenger', 'render', { mode: 'embedded', widget: { targetElement: '#embed-full' } });
-        } else if (mode === 'split') {
-          zE('messenger', 'render', {
-            mode: 'embedded',
-            conversationList: { targetElement: '#embed-list' },
-            messageLog: { targetElement: '#embed-log' }
-          });
-        } else if (mode === 'list') {
-          zE('messenger', 'render', { mode: 'embedded', conversationList: { targetElement: '#embed-full' } });
-        } else if (mode === 'log') {
-          zE('messenger', 'render', { mode: 'embedded', messageLog: { targetElement: '#embed-full' } });
-        } else if (mode === 'floating') {
-          zE('messenger', 'render', { mode: 'floating' });
-        }
-        setStatus('status-render', '描画しました: ' + mode, 'ok');
+        zE('messenger', 'render', buildConfig(mode), function (err) {
+          if (err) {
+            console.warn('render attempt ' + renderAttempts + ' failed:', err);
+            if (renderAttempts < maxAttempts) {
+              setTimeout(function () { attemptRender(mode); }, 700);
+            } else {
+              setStatus('status-render', '描画失敗（リトライ上限）: ' + (err && err.message ? err.message : err), 'err');
+            }
+          } else {
+            setStatus('status-render', '描画しました: ' + mode, 'ok');
+          }
+        });
       } catch (e) {
-        console.error('render error:', e);
-        setStatus('status-render', 'エラー: ' + e.message, 'err');
+        console.warn('zE render threw:', e);
+        if (renderAttempts < maxAttempts) {
+          setTimeout(function () { attemptRender(mode); }, 700);
+        } else {
+          setStatus('status-render', 'エラー: ' + e.message, 'err');
+        }
       }
     }
 
@@ -366,9 +391,7 @@
       document.querySelectorAll('.mode-btn').forEach(function (btn) {
         btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
       });
-      if (widgetReady) {
-        renderEmbed(mode);
-      }
+      renderEmbed(mode);
     }
 
     document.querySelectorAll('.mode-btn').forEach(function (btn) {
@@ -377,24 +400,22 @@
       });
     });
 
-    // 初期表示
     showArea('full');
     updateCodePreview('full');
 
-    // ウィジェット準備完了後に埋め込み描画
+    // フローティング起動ボタンを非表示にしつつ、ウィジェット準備を待って埋め込み描画
     function initEmbed() {
-      try {
-        zE('messenger:on', 'ready', function () {
-          widgetReady = true;
-          setStatus('status-ready', 'ウィジェット準備完了', 'ok');
-          renderEmbed(currentMode);
-        });
-      } catch (e) {
-        console.warn('zE not ready, retrying...', e);
-        setTimeout(initEmbed, 500);
+      if (typeof zE === 'function') {
+        try { zE('messenger', 'hide'); } catch (e) { console.warn('hide failed:', e); }
+        setStatus('status-ready', 'ウィジェット検出、埋め込み開始', 'ok');
+        renderEmbed(currentMode);
+      } else {
+        setTimeout(initEmbed, 300);
       }
     }
-    initEmbed();
+    window.addEventListener('load', function () {
+      initEmbed();
+    });
   </script>
 </body>
 </html>
