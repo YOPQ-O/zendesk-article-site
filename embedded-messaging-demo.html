@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>埋め込みメッセージングデモ - Zendesk Embedded Mode</title>
+  <meta name="description" content="Zendesk Web WidgetのEmbedded Modeを使ってチャットをページ内に埋め込むデモページです。">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+      line-height: 1.8;
+      color: #333;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .layout {
+      display: flex;
+      gap: 24px;
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      align-items: flex-start;
+    }
+
+    .controls {
+      flex: 0 0 320px;
+      background: white;
+      padding: 28px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .controls h2 {
+      color: #333;
+      font-size: 20px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #667eea;
+    }
+
+    .controls p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .mode-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .mode-btn {
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      text-align: left;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .mode-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .status-box {
+      background: #e8f4fd;
+      border-left: 4px solid #2196F3;
+      padding: 16px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .status-box strong {
+      color: #1976D2;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .status-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .status-line .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #bbb;
+      flex-shrink: 0;
+    }
+
+    .status-line.ok .dot { background: #28a745; }
+    .status-line.pending .dot { background: #ffc107; }
+    .status-line.err .dot { background: #dc3545; }
+
+    .code-block {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 14px;
+      border-radius: 5px;
+      overflow-x: auto;
+      margin-top: 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre;
+    }
+
+    .embed-area {
+      flex: 1;
+      background: white;
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      min-height: 700px;
+    }
+
+    .embed-area h2 {
+      color: #333;
+      font-size: 20px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #667eea;
+    }
+
+    .embed-container {
+      width: 100%;
+      height: 620px;
+      border: 1px dashed #ccc;
+      border-radius: 8px;
+      background: #fafafa;
+      position: relative;
+    }
+
+    .embed-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #aaa;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    /* スプリットビュー用 */
+    .split-view {
+      display: none;
+      gap: 16px;
+      height: 620px;
+    }
+
+    .split-view .panel {
+      flex: 1;
+      border: 1px dashed #ccc;
+      border-radius: 8px;
+      background: #fafafa;
+      position: relative;
+    }
+
+    .split-view .panel .embed-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #999;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+      .controls {
+        flex: none;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📲 埋め込みメッセージングデモ</h1>
+    <p>Zendesk Web Widget Embedded Mode - チャットをページ内にインライン埋め込み</p>
+  </header>
+
+  <div class="layout">
+    <aside class="controls">
+      <h2>表示モード</h2>
+      <p>ボタンを切り替えると、ページ内の埋め込み形式が変わります。</p>
+
+      <div class="mode-buttons">
+        <button class="mode-btn active" data-mode="full">フル ウィジェット</button>
+        <button class="mode-btn" data-mode="split">スプリットビュー（リスト + メッセージ）</button>
+        <button class="mode-btn" data-mode="list">会話リストのみ</button>
+        <button class="mode-btn" data-mode="log">メッセージログのみ</button>
+        <button class="mode-btn" data-mode="floating">フローティングに戻す</button>
+      </div>
+
+      <div class="status-box">
+        <strong>⚙️ 実行状態</strong>
+        <div id="status-ready" class="status-line pending"><span class="dot"></span>ウィジェット準備待ち...</div>
+        <div id="status-render" class="status-line pending"><span class="dot"></span>埋め込み描画待ち...</div>
+      </div>
+
+      <div class="code-block" id="code-preview">zE('messenger', 'render', {
+  mode: 'embedded',
+  widget: {
+    targetElement: '#embed-full'
+  }
+});</div>
+    </aside>
+
+    <main class="embed-area">
+      <h2 id="area-title">フル ウィジェット埋め込み</h2>
+
+      <!-- フル ウィジェット / ログのみ / リストのみ で共用 -->
+      <div id="embed-full" class="embed-container">
+        <div class="embed-placeholder">ここにメッセンジャーが埋め込まれます</div>
+      </div>
+
+      <!-- スプリットビュー -->
+      <div id="embed-split" class="split-view">
+        <div class="panel" id="embed-list">
+          <div class="embed-placeholder">会話リスト</div>
+        </div>
+        <div class="panel" id="embed-log">
+          <div class="embed-placeholder">メッセージログ</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <p>© 2026 Zendesk Embedded Messaging Demo. All rights reserved.</p>
+  </footer>
+
+  <!-- Start of z3nyukizos Zendesk Widget script -->
+  <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=2838bc7e-89d2-4acf-8ac2-c985fc4d4c8b"></script>
+  <!-- End of z3nyukizos Zendesk Widget script -->
+
+  <script>
+    var currentMode = 'full';
+    var widgetReady = false;
+
+    function setStatus(id, message, state) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.className = 'status-line ' + state;
+      el.innerHTML = '<span class="dot"></span>' + message;
+    }
+
+    function showArea(mode) {
+      var full = document.getElementById('embed-full');
+      var split = document.getElementById('embed-split');
+      var title = document.getElementById('area-title');
+      full.style.display = 'none';
+      split.style.display = 'none';
+      if (mode === 'split') {
+        split.style.display = 'flex';
+        title.textContent = 'スプリットビュー（リスト + メッセージ）';
+      } else {
+        full.style.display = 'block';
+        if (mode === 'full') title.textContent = 'フル ウィジェット埋め込み';
+        else if (mode === 'list') title.textContent = '会話リストのみ';
+        else if (mode === 'log') title.textContent = 'メッセージログのみ';
+        else if (mode === 'floating') title.textContent = 'フローティングモード';
+      }
+    }
+
+    function updateCodePreview(mode) {
+      var code = '';
+      if (mode === 'full') {
+        code = "zE('messenger', 'render', {\n  mode: 'embedded',\n  widget: {\n    targetElement: '#embed-full'\n  }\n});";
+      } else if (mode === 'split') {
+        code = "zE('messenger', 'render', {\n  mode: 'embedded',\n  conversationList: {\n    targetElement: '#embed-list'\n  },\n  messageLog: {\n    targetElement: '#embed-log'\n  }\n});";
+      } else if (mode === 'list') {
+        code = "zE('messenger', 'render', {\n  mode: 'embedded',\n  conversationList: {\n    targetElement: '#embed-full'\n  }\n});";
+      } else if (mode === 'log') {
+        code = "zE('messenger', 'render', {\n  mode: 'embedded',\n  messageLog: {\n    targetElement: '#embed-full'\n  }\n});";
+      } else if (mode === 'floating') {
+        code = "zE('messenger', 'render', { mode: 'floating' });";
+      }
+      document.getElementById('code-preview').textContent = code;
+    }
+
+    function renderEmbed(mode) {
+      try {
+        if (mode === 'full') {
+          zE('messenger', 'render', { mode: 'embedded', widget: { targetElement: '#embed-full' } });
+        } else if (mode === 'split') {
+          zE('messenger', 'render', {
+            mode: 'embedded',
+            conversationList: { targetElement: '#embed-list' },
+            messageLog: { targetElement: '#embed-log' }
+          });
+        } else if (mode === 'list') {
+          zE('messenger', 'render', { mode: 'embedded', conversationList: { targetElement: '#embed-full' } });
+        } else if (mode === 'log') {
+          zE('messenger', 'render', { mode: 'embedded', messageLog: { targetElement: '#embed-full' } });
+        } else if (mode === 'floating') {
+          zE('messenger', 'render', { mode: 'floating' });
+        }
+        setStatus('status-render', '描画しました: ' + mode, 'ok');
+      } catch (e) {
+        console.error('render error:', e);
+        setStatus('status-render', 'エラー: ' + e.message, 'err');
+      }
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      showArea(mode);
+      updateCodePreview(mode);
+      document.querySelectorAll('.mode-btn').forEach(function (btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+      });
+      if (widgetReady) {
+        renderEmbed(mode);
+      }
+    }
+
+    document.querySelectorAll('.mode-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        switchMode(btn.getAttribute('data-mode'));
+      });
+    });
+
+    // 初期表示
+    showArea('full');
+    updateCodePreview('full');
+
+    // ウィジェット準備完了後に埋め込み描画
+    function initEmbed() {
+      try {
+        zE('messenger:on', 'ready', function () {
+          widgetReady = true;
+          setStatus('status-ready', 'ウィジェット準備完了', 'ok');
+          renderEmbed(currentMode);
+        });
+      } catch (e) {
+        console.warn('zE not ready, retrying...', e);
+        setTimeout(initEmbed, 500);
+      }
+    }
+    initEmbed();
+  </script>
+</body>
+</html>
