@@ -205,12 +205,17 @@ zE('messenger:ui', 'newConversation');</div>
 
     function openNewConversation() {
       try {
-        zE('messenger:open');
+        // メッセンジャーを開く（カンマ形式: Messaging Widget の標準API）
+        if (typeof zE === 'function') {
+          zE('messenger', 'open');
+        }
         setStatus('status-open', 'メッセンジャーを開きました', true);
+        // 新しい会話を開始
         zE('messenger:ui', 'newConversation');
         setStatus('status-conv', '新しい会話を開始しました', true);
       } catch (e) {
         console.error('messenger API error:', e);
+        setStatus('status-conv', 'エラー: ' + e.message, false);
       }
     }
 
@@ -218,16 +223,28 @@ zE('messenger:ui', 'newConversation');</div>
       openNewConversation();
     }
 
-    // ウィジェット読み込み完了を検知してチャットを自動開く
-    zE('messenger:on', 'open', function () {
-      console.log('messenger opened');
-    });
+    // ウィジェット読み込み完了を検知
+    try {
+      zE('messenger:on', 'open', function () { console.log('messenger opened'); });
+      zE('messenger:on', 'close', function () { console.log('messenger closed'); });
+    } catch (e) {
+      console.warn('zE event bind failed:', e);
+    }
 
     // スニペット読み込み後に実行
     window.addEventListener('load', function () {
       setStatus('status-load', 'ウィジェットスクリプトを読み込みました', true);
-      // ウィジェットの準備ができるまで少し待つ
-      setTimeout(openNewConversation, 800);
+      // ウィジェット本体の準備を待ってから実行
+      var attempts = 0;
+      function tryOpen() {
+        attempts++;
+        if (typeof zE === 'function') {
+          openNewConversation();
+        } else if (attempts < 20) {
+          setTimeout(tryOpen, 500);
+        }
+      }
+      setTimeout(tryOpen, 800);
     });
   </script>
 </body>
